@@ -3,37 +3,75 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Daily Dose - Welcome</title>
+  <title>Daily Dose - Home</title>
   <style>
     :root {
       --bg: #f8d7db;  /* Light pink background */
-      --card-bg: #ffffff;  /* White card background */
+      --card-bg: #ffffff;
       --accent: #e91e63;  /* Pink accent color */
       --text-light: #333333; /* Dark text for better readability */
       --text-muted: #757575; /* Muted text */
       --button-color: #e91e63; /* Button color */
     }
+
     body {
       margin: 0;
       min-height: 100vh;
       font-family: Arial, system-ui, sans-serif;
-      background: var(--bg);  /* Light pink background */
+      background-color: var(--bg);
       color: var(--text-light);
       display: flex;
       flex-direction: column;
+      justify-content: center;
       align-items: center;
       padding: 40px 20px;
     }
+
     h1 {
       font-size: 3rem;
       margin-bottom: 16px;
-      color: var(--accent);  /* Pink color for headings */
+      color: var(--accent);
     }
+
     p.subtitle {
       margin: 0 0 40px;
       font-size: 1.2rem;
-      color: var(--text-muted);  /* Muted text color */
+      color: var(--text-muted);
     }
+
+    .login-container {
+      background-color: var(--card-bg);
+      border-radius: 14px;
+      padding: 24px 20px;
+      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.1);
+      max-width: 400px;
+      text-align: center;
+    }
+
+    .login-container input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      font-size: 1rem;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    .login-container button {
+      width: 100%;
+      background-color: var(--button-color);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      font-size: 1.1rem;
+      cursor: pointer;
+    }
+
+    .login-container button:hover {
+      opacity: 0.8;
+    }
+
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -41,11 +79,12 @@
       width: 100%;
       max-width: 960px;
     }
+
     a.card {
-      background: var(--card-bg);  /* White card background */
+      background: var(--card-bg);
       border-radius: 14px;
       padding: 24px 20px;
-      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 6px 24px rgba(2, 6, 23, 0.5);
       color: var(--text-light);
       text-decoration: none;
       display: flex;
@@ -55,17 +94,20 @@
       transition: transform 0.2s ease, box-shadow 0.2s ease;
       cursor: pointer;
     }
+
     a.card:hover,
     a.card:focus {
       transform: translateY(-6px);
-      box-shadow: 0 12px 32px rgba(233, 30, 99, 0.6);  /* Pink shadow on hover */
+      box-shadow: 0 12px 32px rgba(56, 189, 248, 0.6);
       outline: none;
     }
+
     a.card h2 {
       margin: 0 0 8px;
       font-size: 1.6rem;
-      color: var(--accent);  /* Pink color for card headings */
+      color: var(--accent);
     }
+
     a.card p {
       margin: 0;
       font-size: 1rem;
@@ -73,18 +115,78 @@
       text-align: center;
       max-width: 260px;
     }
+
   </style>
 </head>
 <body>
   <h1>Welcome to Daily Dose</h1>
-  <p class="subtitle">Choose a tool to get started</p>
+  <p class="subtitle">Log in to access your tools</p>
 
-  <div class="grid">
-    <a href="todo.html" class="card" tabindex="0" aria-label="Go to To-Do List tool">
-      <h2>To-Do List</h2>
-      <p>Manage your daily tasks in an organized way.</p>
-    </a>
-    <!-- Add more cards or tools here in the future -->
+  <!-- Login Form -->
+  <div class="login-container" id="login-container">
+    <input type="text" id="username" placeholder="Enter Username" />
+    <input type="password" id="password" placeholder="Enter Password" />
+    <button onclick="login()">Log In</button>
+    <p id="error-msg" style="color: red; display: none;">Invalid credentials. Please try again.</p>
   </div>
+
+  <!-- Landing Page Content (Hidden Until Logged In) -->
+  <div id="landing-page" style="display: none;">
+    <p class="subtitle">Choose a tool to get started</p>
+    <div class="grid">
+      <a href="todo.html" class="card">
+        <h2>To-Do List</h2>
+        <p>Manage your daily tasks in an organized way.</p>
+      </a>
+      <a href="caesar.html" class="card">
+        <h2>Caesar Cipher</h2>
+        <p>Encode and decode text using the classic Caesar cipher.</p>
+      </a>
+      <a href="hash.html" class="card">
+        <h2>Hash Generator</h2>
+        <p>Generate cryptographic hashes like SHA-256 and SHA-1 instantly.</p>
+      </a>
+      <a href="articles.html" class="card">
+        <h2>Articles</h2>
+        <p>Read educational articles on cybersecurity and networking.</p>
+      </a>
+    </div>
+  </div>
+
+  <script>
+    // Predefined credentials (you can change these values)
+    const storedUsername = "admin";
+    const storedPassword = "password123";
+
+    // Function to handle login
+    function login() {
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+      const errorMsg = document.getElementById("error-msg");
+
+      // Check if entered username and password match the predefined values
+      if (username === storedUsername && password === storedPassword) {
+        // Save login state to localStorage
+        localStorage.setItem("isLoggedIn", "true");
+
+        // Hide login form and show landing page
+        document.getElementById("login-container").style.display = "none";
+        document.getElementById("landing-page").style.display = "block";
+      } else {
+        errorMsg.style.display = "block";
+      }
+    }
+
+    // Check if the user is logged in when the page loads
+    window.onload = () => {
+      const isLoggedIn = localStorage.getItem("isLoggedIn");
+
+      // If logged in, skip login and show landing page
+      if (isLoggedIn === "true") {
+        document.getElementById("login-container").style.display = "none";
+        document.getElementById("landing-page").style.display = "block";
+      }
+    };
+  </script>
 </body>
 </html>
