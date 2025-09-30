@@ -6,212 +6,157 @@
   <title>Daily Dose - To-Do List</title>
   <style>
     :root {
-      /* Light mode colors */
-      --bg-light: #ffccf2;  /* Soft pink background */
-      --card-bg-light: #ffffff;
+      --bg: #f8d7db;  /* Light pink background */
+      --card-bg: #ffffff;
+      --accent: #e91e63;  /* Pink accent color */
       --text-light: #333333; /* Dark text for better readability */
+      --text-muted: #757575; /* Muted text */
       --button-color: #e91e63; /* Button color */
-      
-      /* Dark mode colors */
-      --bg-dark: #2c2c2c;
-      --card-bg-dark: #3a3a3a;
-      --text-dark: #f5f5f5;
     }
 
     body {
-      background-color: var(--bg-light);
-      color: var(--text-light);
-      font-family: Arial, system-ui, sans-serif;
       margin: 0;
-      padding: 40px 20px;
       min-height: 100vh;
+      font-family: Arial, system-ui, sans-serif;
+      background-color: var(--bg);
+      color: var(--text-light);
       display: flex;
       flex-direction: column;
       align-items: center;
+      padding: 40px 20px;
     }
 
-    .task-container {
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 16px;
+      color: var(--accent);
+    }
+
+    p.subtitle {
+      margin: 0 0 40px;
+      font-size: 1.2rem;
+      color: var(--text-muted);
+    }
+
+    /* To-Do Container Styling */
+    .todo-container {
+      background-color: var(--card-bg);
+      border-radius: 14px;
+      padding: 24px 20px;
+      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.1);
+      max-width: 500px;
       width: 100%;
-      max-width: 600px;
-      margin-bottom: 30px;
+      text-align: center;
     }
 
-    .task {
-      background-color: var(--card-bg-light);
-      margin-bottom: 10px;
-      padding: 15px;
+    .todo-container input,
+    .todo-container button {
+      width: 100%;
+      padding: 10px;
+      font-size: 1rem;
       border-radius: 5px;
-      box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      border: 1px solid #ccc;
+      margin-bottom: 15px;
     }
 
-    .priority {
-      padding: 5px;
-      font-size: 0.9rem;
-      border-radius: 5px;
-      background-color: #f8f8f8;
-    }
-
-    .priority-high {
-      background-color: #e91e63; /* Pink for high priority */
-      color: white;
-    }
-
-    .priority-medium {
-      background-color: #ff9800; /* Orange for medium priority */
-      color: white;
-    }
-
-    .priority-low {
-      background-color: #4caf50; /* Green for low priority */
-      color: white;
-    }
-
-    button {
+    .todo-container button {
       background-color: var(--button-color);
       color: white;
       border: none;
-      padding: 10px 20px;
-      border-radius: 5px;
       cursor: pointer;
-      font-size: 1rem;
+      transition: opacity 0.2s ease;
     }
 
-    button:hover {
+    .todo-container button:hover {
       opacity: 0.8;
     }
 
-    .dark-mode {
-      background-color: var(--bg-dark);
-      color: var(--text-dark);
+    .todo-list {
+      margin-top: 20px;
+      text-align: left;
     }
 
-    .dark-mode .task {
-      background-color: var(--card-bg-dark);
-    }
-
-    /* Styling for input and select elements */
-    input[type="text"],
-    select {
+    .todo-item {
+      background-color: var(--card-bg);
+      margin: 10px 0;
       padding: 10px;
-      font-size: 1rem;
-      margin-right: 10px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-      margin-bottom: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
 
-    input[type="date"] {
-      margin-left: 10px;
+    .todo-item button {
+      background-color: #f44336; /* Red for deleting */
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      float: right;
     }
+
+    .todo-item button:hover {
+      background-color: #d32f2f;
+    }
+
   </style>
 </head>
 <body>
+
   <h1>To-Do List</h1>
+  <p class="subtitle">Organize your daily tasks</p>
 
-  <div>
-    <input type="text" id="taskInput" placeholder="Add a new task" />
-    <select id="prioritySelect">
-      <option value="high">High</option>
-      <option value="medium">Medium</option>
-      <option value="low">Low</option>
-    </select>
-    <input type="date" id="deadlineInput" />
-    <button onclick="addTask()">Add Task</button>
+  <div class="todo-container">
+    <!-- Input and buttons -->
+    <input type="text" id="todo-input" placeholder="Enter a new task" />
+    <button onclick="addTodo()">Add Task</button>
+
+    <!-- To-Do List -->
+    <div id="todo-list" class="todo-list"></div>
   </div>
-
-  <div class="task-container">
-    <!-- Tasks will be dynamically loaded here -->
-  </div>
-
-  <button onclick="toggleTheme()">Toggle Dark Mode</button>
-  <button onclick="exportTasks()">Export Tasks to CSV</button>
 
   <script>
-    // Function to get tasks from localStorage
-    function loadTasks() {
-      const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-      const taskContainer = document.querySelector(".task-container");
-      taskContainer.innerHTML = ''; // Clear existing tasks
+    // Retrieve tasks from localStorage
+    let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+
+    // Function to display tasks
+    function displayTasks() {
+      const todoListDiv = document.getElementById("todo-list");
+      todoListDiv.innerHTML = "";  // Clear existing tasks
 
       tasks.forEach((task, index) => {
-        const taskDiv = document.createElement("div");
-        taskDiv.classList.add("task");
-
-        const priorityClass = `priority-${task.priority}`;
-        taskDiv.innerHTML = `
-          <span>${task.text}</span>
-          <span class="priority ${priorityClass}">${task.priority}</span>
-          ${task.deadline ? `<span class="deadline">Deadline: ${task.deadline}</span>` : ''}
+        const taskElement = document.createElement("div");
+        taskElement.classList.add("todo-item");
+        taskElement.innerHTML = `
+          <span>${task}</span>
           <button onclick="deleteTask(${index})">Delete</button>
         `;
-
-        taskContainer.appendChild(taskDiv);
+        todoListDiv.appendChild(taskElement);
       });
     }
 
-    // Function to add task to the list
-    function addTask() {
-      const taskInput = document.getElementById("taskInput");
-      const prioritySelect = document.getElementById("prioritySelect");
-      const deadlineInput = document.getElementById("deadlineInput");
+    // Function to add a task
+    function addTodo() {
+      const input = document.getElementById("todo-input");
+      const newTask = input.value.trim();
 
-      const taskText = taskInput.value.trim();
-      const taskPriority = prioritySelect.value;
-      const taskDeadline = deadlineInput.value;
-
-      if (taskText) {
-        const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-        tasks.push({ text: taskText, priority: taskPriority, deadline: taskDeadline });
+      if (newTask) {
+        tasks.push(newTask);
         localStorage.setItem("tasks", JSON.stringify(tasks));
-
-        taskInput.value = "";  // Clear input field
-        deadlineInput.value = ""; // Clear deadline input
-        loadTasks();  // Reload tasks
+        input.value = "";  // Clear the input field
+        displayTasks();    // Re-render the task list
       }
     }
 
     // Function to delete a task
     function deleteTask(index) {
-      const tasks = JSON.parse(localStorage.getItem("tasks"));
-      tasks.splice(index, 1); // Remove task at index
+      tasks.splice(index, 1);
       localStorage.setItem("tasks", JSON.stringify(tasks));
-      loadTasks();  // Reload tasks
+      displayTasks();    // Re-render the task list after deletion
     }
 
-    // Function to toggle dark mode
-    function toggleTheme() {
-      const body = document.body;
-      body.classList.toggle('dark-mode');
-      localStorage.setItem('theme', body.classList.contains('dark-mode') ? 'dark' : 'light');
-    }
-
-    // Function to export tasks to CSV
-    function exportTasks() {
-      const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-      const csvContent = "data:text/csv;charset=utf-8,"
-        + "Task,Priority,Deadline\n"
-        + tasks.map(task => `${task.text},${task.priority},${task.deadline || ''}`).join("\n");
-
-      const encodedUri = encodeURI(csvContent);
-      const link = document.createElement("a");
-      link.setAttribute("href", encodedUri);
-      link.setAttribute("download", "tasks.csv");
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
-
-    // Check for the user's theme preference on load
-    window.onload = () => {
-      const savedTheme = localStorage.getItem('theme');
-      if (savedTheme === 'dark') {
-        document.body.classList.add('dark-mode');
-      }
-      loadTasks();  // Load tasks when page loads
-    };
+    // Initially display tasks from localStorage
+    displayTasks();
   </script>
+
 </body>
 </html>
