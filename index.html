@@ -6,17 +6,17 @@
   <title>Play Lab - Welcome</title>
   <style>
     :root {
-      --bg: #0f172a;
-      --card-bg: #111827;
-      --accent: #ff69b4; /* Pink */
-      --text-light: #e6eef6;
-      --text-muted: #94a3b8;
+      --bg: #ffccf2;  /* Soft light pink background */
+      --card-bg: #ffffff;  /* White cards for good contrast */
+      --accent: #00bfae;  /* Teal accent color */
+      --text-light: #2d2d2d;  /* Dark text for readability */
+      --text-muted: #777777;  /* Muted text color */
     }
     body {
       margin: 0;
       min-height: 100vh;
-      font-family: Inter, system-ui, -apple-system, Roboto, "Segoe UI", Arial;
-      background: linear-gradient(180deg, var(--bg), #020617 80%);
+      font-family: Arial, system-ui, sans-serif;
+      background: var(--bg);  /* Soft pink background */
       color: var(--text-light);
       display: flex;
       flex-direction: column;
@@ -26,14 +26,12 @@
     h1 {
       font-size: 3rem;
       margin-bottom: 16px;
-      color: var(--accent);
-      user-select: none;
+      color: var(--accent);  /* Teal color for headings */
     }
     p.subtitle {
       margin: 0 0 40px;
       font-size: 1.2rem;
-      color: var(--text-muted);
-      user-select: none;
+      color: var(--text-muted);  /* Muted text color */
     }
     .grid {
       display: grid;
@@ -43,10 +41,10 @@
       max-width: 960px;
     }
     a.card {
-      background: var(--card-bg);
+      background: var(--card-bg);  /* White card background */
       border-radius: 14px;
       padding: 24px 20px;
-      box-shadow: 0 6px 24px rgba(2, 6, 23, 0.5);
+      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.1);
       color: var(--text-light);
       text-decoration: none;
       display: flex;
@@ -55,18 +53,17 @@
       align-items: center;
       transition: transform 0.2s ease, box-shadow 0.2s ease;
       cursor: pointer;
-      user-select: none;
     }
     a.card:hover,
     a.card:focus {
       transform: translateY(-6px);
-      box-shadow: 0 12px 32px rgba(56, 189, 248, 0.6);
+      box-shadow: 0 12px 32px rgba(0, 191, 174, 0.6);  /* Teal shadow on hover */
       outline: none;
     }
     a.card h2 {
       margin: 0 0 8px;
       font-size: 1.6rem;
-      color: var(--accent);
+      color: var(--accent);  /* Teal color for card headings */
     }
     a.card p {
       margin: 0;
@@ -74,7 +71,6 @@
       color: var(--text-muted);
       text-align: center;
       max-width: 260px;
-      user-select: none;
     }
   </style>
 </head>
