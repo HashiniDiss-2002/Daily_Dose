@@ -60,6 +60,18 @@
     .task-item p {
       margin: 0;
     }
+    .progress-bar {
+      width: 100%;
+      height: 10px;
+      background-color: #e0e0e0;
+      border-radius: 5px;
+      margin-top: 5px;
+    }
+    .progress-bar-inner {
+      height: 100%;
+      background-color: #e91e63;
+      border-radius: 5px;
+    }
     .subtitle {
       text-align: center;
       color: #757575;
@@ -117,4 +129,74 @@
     }
 
     function displayTasks() {
-      const taskList = document.getElementById
+      const taskList = document.getElementById('taskList');
+      taskList.innerHTML = ''; // Clear current tasks
+
+      tasks.forEach((task, index) => {
+        const taskElement = document.createElement('div');
+        taskElement.classList.add('task-item');
+        const progress = (task.saved / task.target) * 100;
+
+        taskElement.innerHTML = `
+          <p>${task.name}: ${task.saved} LKR / ${task.target} LKR</p>
+          <p>Balance to Target: ${(task.target - task.saved)} LKR</p>
+          <div class="progress-bar">
+            <div class="progress-bar-inner" style="width: ${progress}%;"></div>
+          </div>
+          <button onclick="addExpenseToTask(${index})">Add Expense to Task</button>
+        `;
+        taskList.appendChild(taskElement);
+      });
+    }
+
+    function addIncome() {
+      const incomeAmount = parseFloat(document.getElementById('incomeAmount').value);
+      if (incomeAmount > 0) {
+        balance += incomeAmount;
+        localStorage.setItem('balance', JSON.stringify(balance));
+        updateBalance();
+      }
+    }
+
+    function addExpense() {
+      const expenseCategory = document.getElementById('expenseCategory').value;
+      const expenseAmount = parseFloat(document.getElementById('expenseAmount').value);
+      if (expenseCategory && expenseAmount > 0) {
+        balance -= expenseAmount;
+        localStorage.setItem('balance', JSON.stringify(balance));
+        updateBalance();
+        addExpenseToTaskList(expenseCategory, expenseAmount);
+      }
+    }
+
+    function addTask() {
+      const taskName = document.getElementById('taskName').value;
+      const targetAmount = parseFloat(document.getElementById('taskTargetAmount').value);
+
+      if (taskName && targetAmount > 0) {
+        tasks.push({
+          name: taskName,
+          target: targetAmount,
+          saved: 0,
+        });
+        localStorage.setItem('tasks', JSON.stringify(tasks));
+        displayTasks();
+      }
+    }
+
+    function addExpenseToTask(index) {
+      const expenseAmount = parseFloat(prompt('Enter the amount to add to this task:'));
+      if (expenseAmount > 0) {
+        tasks[index].saved += expenseAmount;
+        localStorage.setItem('tasks', JSON.stringify(tasks));
+        displayTasks();
+      }
+    }
+
+    // Initial loading
+    updateBalance();
+    displayTasks();
+  </script>
+
+</body>
+</html>
