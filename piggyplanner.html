@@ -10,18 +10,26 @@
       background-color: #f8d7db;
       color: #333;
       padding: 20px;
+      margin: 0;
     }
     h1 {
       color: #e91e63;
       text-align: center;
     }
     .container {
-      max-width: 600px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      max-width: 1200px;
       margin: 0 auto;
+    }
+    .box {
       background: #ffffff;
       padding: 20px;
       border-radius: 8px;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
     }
     input, button {
       width: 100%;
@@ -52,6 +60,11 @@
     .task-item p {
       margin: 0;
     }
+    .subtitle {
+      text-align: center;
+      color: #757575;
+      font-size: 1.2rem;
+    }
   </style>
 </head>
 <body>
@@ -59,25 +72,37 @@
   <h1>Piggy Planner</h1>
 
   <div class="container">
-    <h2>Add Income</h2>
-    <input type="number" id="incomeAmount" placeholder="Enter Income Amount" />
-    <button onclick="addIncome()">Add Income</button>
-
-    <h2>Add Expense</h2>
-    <input type="text" id="expenseCategory" placeholder="Expense Category" />
-    <input type="number" id="expenseAmount" placeholder="Expense Amount" />
-    <button onclick="addExpense()">Add Expense</button>
-
-    <h2>Add Task/Goal</h2>
-    <input type="text" id="taskName" placeholder="Task Name (e.g., Vacation)" />
-    <input type="number" id="taskTargetAmount" placeholder="Target Amount" />
-    <button onclick="addTask()">Add Task</button>
-
-    <div class="balance">
-      <h3>Total Balance: <span id="balance">0</span></h3>
+    <!-- Income Section -->
+    <div class="box">
+      <h2>Add Income</h2>
+      <input type="number" id="incomeAmount" placeholder="Enter Income Amount (LKR)" />
+      <button onclick="addIncome()">Add Income</button>
     </div>
 
-    <div class="tasks">
+    <!-- Expense Section -->
+    <div class="box">
+      <h2>Add Expense</h2>
+      <input type="text" id="expenseCategory" placeholder="Expense Category" />
+      <input type="number" id="expenseAmount" placeholder="Expense Amount (LKR)" />
+      <button onclick="addExpense()">Add Expense</button>
+    </div>
+
+    <!-- Task Section -->
+    <div class="box">
+      <h2>Add Task/Goal</h2>
+      <input type="text" id="taskName" placeholder="Task Name (e.g., Vacation)" />
+      <input type="number" id="taskTargetAmount" placeholder="Target Amount (LKR)" />
+      <button onclick="addTask()">Add Task</button>
+    </div>
+
+    <!-- Balance Section -->
+    <div class="box">
+      <h3>Total Balance</h3>
+      <p id="balance">0 LKR</p>
+    </div>
+
+    <!-- Tasks Section -->
+    <div class="box">
       <h3>Tasks/Goals</h3>
       <div id="taskList"></div>
     </div>
@@ -88,72 +113,8 @@
     let balance = JSON.parse(localStorage.getItem('balance')) || 0;
 
     function updateBalance() {
-      document.getElementById('balance').textContent = balance;
+      document.getElementById('balance').textContent = balance + " LKR";
     }
 
     function displayTasks() {
-      const taskList = document.getElementById('taskList');
-      taskList.innerHTML = ''; // Clear current tasks
-
-      tasks.forEach((task, index) => {
-        const taskElement = document.createElement('div');
-        taskElement.classList.add('task-item');
-        taskElement.innerHTML = `
-          <p>${task.name}: $${task.saved} / $${task.target}</p>
-          <button onclick="addExpenseToTask(${index})">Add Expense to Task</button>
-        `;
-        taskList.appendChild(taskElement);
-      });
-    }
-
-    function addIncome() {
-      const incomeAmount = parseFloat(document.getElementById('incomeAmount').value);
-      if (incomeAmount > 0) {
-        balance += incomeAmount;
-        localStorage.setItem('balance', JSON.stringify(balance));
-        updateBalance();
-      }
-    }
-
-    function addExpense() {
-      const expenseCategory = document.getElementById('expenseCategory').value;
-      const expenseAmount = parseFloat(document.getElementById('expenseAmount').value);
-      if (expenseCategory && expenseAmount > 0) {
-        balance -= expenseAmount;
-        localStorage.setItem('balance', JSON.stringify(balance));
-        updateBalance();
-        addExpenseToTaskList(expenseCategory, expenseAmount);
-      }
-    }
-
-    function addTask() {
-      const taskName = document.getElementById('taskName').value;
-      const targetAmount = parseFloat(document.getElementById('taskTargetAmount').value);
-
-      if (taskName && targetAmount > 0) {
-        tasks.push({
-          name: taskName,
-          target: targetAmount,
-          saved: 0,
-        });
-        localStorage.setItem('tasks', JSON.stringify(tasks));
-        displayTasks();
-      }
-    }
-
-    function addExpenseToTask(index) {
-      const expenseAmount = parseFloat(prompt('Enter the amount to add to this task:'));
-      if (expenseAmount > 0) {
-        tasks[index].saved += expenseAmount;
-        localStorage.setItem('tasks', JSON.stringify(tasks));
-        displayTasks();
-      }
-    }
-
-    // Initial loading
-    updateBalance();
-    displayTasks();
-  </script>
-
-</body>
-</html>
+      const taskList = document.getElementById
