@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Daily Dose - To-Do List</title>
+  <style>
+    :root {
+      --bg: #f8d7db;  /* Light pink background */
+      --card-bg: #ffffff;
+      --accent: #e91e63;  /* Pink accent color */
+      --text-light: #333333; /* Dark text for better readability */
+      --text-muted: #757575; /* Muted text */
+      --button-color: #e91e63; /* Button color */
+    }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      background: var(--bg);  /* Applying the pink background */
+      color: var(--text-light);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+    }
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 16px;
+      color: var(--accent);
+    }
+    p.subtitle {
+      margin: 0 0 40px;
+      font-size: 1.2rem;
+      color: var(--text-muted);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 24px;
+      width: 100%;
+      max-width: 960px;
+    }
+    a.card {
+      background: var(--card-bg);
+      border-radius: 14px;
+      padding: 24px 20px;
+      box-shadow: 0 6px 24px rgba(2, 6, 23, 0.5);
+      color: var(--text-light);
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      cursor: pointer;
+    }
+    a.card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 32px rgba(56, 189, 248, 0.6);
+    }
+    a.card h2 {
+      margin: 0 0 8px;
+      font-size: 1.6rem;
+      color: var(--accent);
+    }
+    a.card p {
+      margin: 0;
+      font-size: 1rem;
+      color: var(--text-muted);
+      text-align: center;
+      max-width: 260px;
+    }
+    .todo-container {
+      background-color: var(--card-bg);
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 6px 24px rgba(2, 6, 23, 0.5);
+      width: 100%;
+      max-width: 480px;
+      text-align: center;
+    }
+    .todo-container input {
+      width: 80%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+    .todo-container button {
+      background-color: var(--button-color);
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .todo-container button:hover {
+      opacity: 0.9;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    ul li {
+      background-color: #f4f4f4;
+      padding: 10px;
+      margin: 5px 0;
+      border-radius: 8px;
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Daily Dose</h1>
+  <p class="subtitle">Your Personalized To-Do List</p>
+
+  <div class="todo-container">
+    <h2>To-Do List</h2>
+    <input type="text" id="task-input" placeholder="Enter your task here" />
+    <button onclick="addTask()">Add Task</button>
+    <button onclick="clearTasks()">Clear All Tasks</button>
+    <ul id="task-list"></ul>
+  </div>
+
+  <script>
+    // Load tasks from localStorage
+    function loadTasks() {
+      const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+      const taskList = document.getElementById('task-list');
+      taskList.innerHTML = '';
+
+      tasks.forEach((task, index) => {
+        const li = document.createElement('li');
+        li.textContent = task;
+        taskList.appendChild(li);
+      });
+    }
+
+    // Add task to localStorage and UI
+    function addTask() {
+      const taskInput = document.getElementById('task-input');
+      const task = taskInput.value.trim();
+
+      if (task === '') {
+        alert('Please enter a task!');
+        return;
+      }
+
+      let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+      tasks.push(task);
+      localStorage.setItem('tasks', JSON.stringify(tasks));
+
+      taskInput.value = '';
+      loadTasks();
+    }
+
+    // Clear all tasks from localStorage and UI
+    function clearTasks() {
+      localStorage.removeItem('tasks');
+      loadTasks();
+    }
+
+    // Initial load of tasks
+    loadTasks();
+  </script>
+
+</body>
+</html>
