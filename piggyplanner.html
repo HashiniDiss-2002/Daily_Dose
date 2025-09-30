@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Piggy Planner</title>
   <style>
     body {
@@ -21,22 +21,48 @@
     }
 
     .container {
-      max-width: 600px;
+      max-width: 1200px;
       margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      padding: 20px;
+    }
+
+    .box {
       background: #ffffff;
       padding: 20px;
       border-radius: 8px;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      width: 100%;
+      margin-bottom: 20px;
+      position: relative;
     }
 
     h2 {
       font-size: 1.6rem;
       margin-top: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
     }
 
-    input, button {
-      width: 100%;
+    .dropdown-icon {
+      font-size: 1.2rem;
+      transition: transform 0.3s ease;
+    }
+
+    .content {
+      display: block;
+      margin-top: 10px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    input, button, select {
+      width: 96%;
       padding: 12px;
       margin: 10px 0;
       border-radius: 5px;
@@ -55,21 +81,15 @@
       opacity: 0.8;
     }
 
-    .balance, .task {
-      margin-top: 20px;
-    }
-
     .task-item {
-      display: flex;
-      justify-content: space-between;
-      padding: 10px;
       background-color: #f0f0f0;
       border-radius: 5px;
+      padding: 10px;
       margin-bottom: 10px;
     }
 
     .task-item p {
-      margin: 0;
+      margin: 5px 0;
     }
 
     .progress-bar {
@@ -77,6 +97,7 @@
       height: 8px;
       background-color: #e0e0e0;
       border-radius: 5px;
+      overflow: hidden;
       margin-top: 5px;
     }
 
@@ -84,14 +105,35 @@
       height: 100%;
       background-color: #76c7c0;
       border-radius: 5px;
+      transition: width 0.3s ease-in-out;
     }
 
-    .checkbox-container {
-      margin-top: 10px;
+    /* Flex container for balance + tasks */
+    .flex-row {
+      display: flex;
+      gap: 20px;
+      padding: 0 20px;
+      max-width: 1200px;
+      margin: 0 auto;
     }
 
-    /* Mobile responsiveness */
+    .flex-row .box {
+      margin-bottom: 0;
+    }
+
+    .balance-box {
+      flex: 0 0 20%;
+    }
+
+    .tasks-box {
+      flex: 0 0 80%;
+    }
+
     @media (max-width: 768px) {
+      .container {
+        grid-template-columns: 1fr;
+      }
+
       h1 {
         font-size: 2rem;
       }
@@ -100,47 +142,18 @@
         font-size: 1.4rem;
       }
 
-      input, button {
+      input, button, select {
         padding: 10px;
         font-size: 1rem;
       }
 
-      .balance, .task {
-        margin-top: 15px;
-      }
-    }
-
-    @media (max-width: 480px) {
-      h1 {
-        font-size: 1.8rem;
-      }
-
-      .container {
-        padding: 15px;
-      }
-
-      input, button {
-        font-size: 0.9rem;
-        padding: 8px;
-      }
-
-      h2 {
-        font-size: 1.2rem;
-      }
-
-      .task-item {
+      .flex-row {
         flex-direction: column;
-        align-items: flex-start;
-        padding: 15px;
       }
 
-      .task-item p {
-        margin-bottom: 5px;
-      }
-
-      .progress-bar {
-        margin-top: 5px;
-        height: 6px;
+      .balance-box,
+      .tasks-box {
+        flex: 0 0 100%;
       }
     }
   </style>
@@ -149,56 +162,87 @@
 
   <h1>Piggy Planner</h1>
 
+  <!-- Top 3 Boxes -->
   <div class="container">
-    <h2>Add Income</h2>
-    <input type="number" id="incomeAmount" placeholder="Enter Income Amount" />
-    <button onclick="addIncome()">Add Income</button>
-
-    <h2>Add Expense</h2>
-    <input type="text" id="expenseCategory" placeholder="Expense Category" />
-    <input type="number" id="expenseAmount" placeholder="Expense Amount" />
-    <div class="checkbox-container">
-      <input type="checkbox" id="isTaskExpense" /> Is this related to a task/goal?
+    <!-- Income -->
+    <div class="box">
+      <h2 onclick="toggleVisibility('incomeContent')">
+        Add Income
+        <span class="dropdown-icon" id="incomeIcon">▼</span>
+      </h2>
+      <div id="incomeContent" class="content hidden">
+        <input type="number" id="incomeAmount" placeholder="Enter Income Amount" />
+        <button onclick="addIncome()">Add Income</button>
+      </div>
     </div>
-    <button onclick="addExpense()">Add Expense</button>
 
-    <h2>Add Task/Goal</h2>
-    <input type="text" id="taskName" placeholder="Task Name (e.g., Vacation)" />
-    <input type="number" id="taskTargetAmount" placeholder="Target Amount" />
-    <button onclick="addTask()">Add Task</button>
+    <!-- Expense -->
+    <div class="box">
+      <h2 onclick="toggleVisibility('expenseContent')">
+        Add Expense
+        <span class="dropdown-icon" id="expenseIcon">▼</span>
+      </h2>
+      <div id="expenseContent" class="content hidden">
+        <input type="text" id="expenseCategory" placeholder="Expense Category" />
+        <input type="number" id="expenseAmount" placeholder="Expense Amount" />
+        <label for="taskRelatedSelect">Is this related to a task/goal?</label>
+        <select id="taskRelatedSelect">
+          <option value="no">No</option>
+          <option value="yes">Yes</option>
+        </select>
+        <button onclick="addExpense()">Add Expense</button>
+      </div>
+    </div>
 
-    <div class="balance">
+    <!-- Task -->
+    <div class="box">
+      <h2 onclick="toggleVisibility('taskContent')">
+        Add Task/Goal
+        <span class="dropdown-icon" id="taskIcon">▼</span>
+      </h2>
+      <div id="taskContent" class="content hidden">
+        <input type="text" id="taskName" placeholder="Task Name (e.g., Vacation)" />
+        <input type="number" id="taskTargetAmount" placeholder="Target Amount" />
+        <button onclick="addTask()">Add Task</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Section: Balance + Task Progress -->
+  <div class="flex-row">
+    <!-- Balance Box -->
+    <div class="box balance-box">
       <h3>Total Balance: LKR <span id="balance">0</span></h3>
     </div>
 
-    <div class="tasks">
+    <!-- Tasks Box -->
+    <div class="box tasks-box">
       <h3>Tasks/Goals</h3>
       <div id="taskList"></div>
     </div>
   </div>
 
+  <!-- JavaScript -->
   <script>
     let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
     let balance = JSON.parse(localStorage.getItem('balance')) || 0;
 
-    // Update balance display
     function updateBalance() {
       document.getElementById('balance').textContent = balance;
     }
 
-    // Display tasks with progress bar
     function displayTasks() {
       const taskList = document.getElementById('taskList');
-      taskList.innerHTML = ''; // Clear current tasks
+      taskList.innerHTML = '';
 
-      tasks.forEach((task, index) => {
+      tasks.forEach((task) => {
         const progress = (task.saved / task.target) * 100;
         const taskElement = document.createElement('div');
         taskElement.classList.add('task-item');
         taskElement.innerHTML = `
-          <p>${task.name}: LKR ${task.saved} / LKR ${task.target}</p>
+          <p><strong>${task.name}</strong>: LKR ${task.saved} / LKR ${task.target}</p>
           <div class="progress-bar">
-            <div class="progress-bar-fill" style="width: ${progress}%"></div>
+            <div class="progress-bar-fill" style="width: ${Math.min(progress, 100)}%"></div>
           </div>
           <p>Remaining to target: LKR ${task.target - task.saved}</p>
         `;
@@ -206,7 +250,6 @@
       });
     }
 
-    // Add Income function
     function addIncome() {
       const incomeAmount = parseFloat(document.getElementById('incomeAmount').value);
       if (incomeAmount > 0) {
@@ -216,31 +259,20 @@
       }
     }
 
-    // Add Expense function
     function addExpense() {
-      const expenseCategory = document.getElementById('expenseCategory').value;
-      const expenseAmount = parseFloat(document.getElementById('expenseAmount').value);
-      const isTaskExpense = document.getElementById('isTaskExpense').checked;
+      const category = document.getElementById('expenseCategory').value;
+      const amount = parseFloat(document.getElementById('expenseAmount').value);
+      const related = document.getElementById('taskRelatedSelect').value === "yes";
 
-      if (expenseCategory && expenseAmount > 0) {
-        // Deduct from balance
-        balance -= expenseAmount;
+      if (category && amount > 0) {
+        balance -= amount;
         localStorage.setItem('balance', JSON.stringify(balance));
         updateBalance();
 
-        // If it's related to a task, update the task progress
-        if (isTaskExpense) {
-          let taskIndex = -1;
-
-          // Find the task that matches the category
-          tasks.forEach((task, index) => {
-            if (task.name.toLowerCase() === expenseCategory.toLowerCase()) {
-              taskIndex = index;
-            }
-          });
-
-          if (taskIndex !== -1) {
-            tasks[taskIndex].saved += expenseAmount;
+        if (related) {
+          const task = tasks.find(t => t.name.toLowerCase() === category.toLowerCase());
+          if (task) {
+            task.saved += amount;
             localStorage.setItem('tasks', JSON.stringify(tasks));
             displayTasks();
           }
@@ -248,26 +280,26 @@
       }
     }
 
-    // Add Task function
     function addTask() {
-      const taskName = document.getElementById('taskName').value;
-      const targetAmount = parseFloat(document.getElementById('taskTargetAmount').value);
-
-      if (taskName && targetAmount > 0) {
-        tasks.push({
-          name: taskName,
-          target: targetAmount,
-          saved: 0,
-        });
+      const name = document.getElementById('taskName').value;
+      const target = parseFloat(document.getElementById('taskTargetAmount').value);
+      if (name && target > 0) {
+        tasks.push({ name, target, saved: 0 });
         localStorage.setItem('tasks', JSON.stringify(tasks));
         displayTasks();
       }
     }
 
-    // Initial loading
+    function toggleVisibility(id) {
+      const content = document.getElementById(id);
+      const icon = content.previousElementSibling.querySelector('.dropdown-icon');
+      content.classList.toggle('hidden');
+      icon.textContent = content.classList.contains('hidden') ? '▼' : '▲';
+    }
+
+    // Initialize
     updateBalance();
     displayTasks();
   </script>
-
 </body>
 </html>
