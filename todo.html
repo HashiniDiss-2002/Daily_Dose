@@ -50,6 +50,7 @@
     }
 
     .todo-container input,
+    .todo-container select,
     .todo-container button {
       width: 100%;
       padding: 10px;
@@ -98,6 +99,19 @@
       background-color: #d32f2f;
     }
 
+    .todo-item span {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .todo-item .priority {
+      font-weight: bold;
+    }
+
+    .todo-item .deadline {
+      font-style: italic;
+      color: var(--text-muted);
+    }
   </style>
 </head>
 <body>
@@ -106,8 +120,14 @@
   <p class="subtitle">Organize your daily tasks</p>
 
   <div class="todo-container">
-    <!-- Input and buttons -->
+    <!-- Input fields for task, priority, and deadline -->
     <input type="text" id="todo-input" placeholder="Enter a new task" />
+    <select id="priority-select">
+      <option value="low">Low Priority</option>
+      <option value="medium">Medium Priority</option>
+      <option value="high">High Priority</option>
+    </select>
+    <input type="date" id="deadline-input" />
     <button onclick="addTodo()">Add Task</button>
 
     <!-- To-Do List -->
@@ -127,7 +147,9 @@
         const taskElement = document.createElement("div");
         taskElement.classList.add("todo-item");
         taskElement.innerHTML = `
-          <span>${task}</span>
+          <span>${task.text}</span>
+          <span class="priority">${task.priority.charAt(0).toUpperCase() + task.priority.slice(1)} Priority</span>
+          <span class="deadline">Deadline: ${task.deadline}</span>
           <button onclick="deleteTask(${index})">Delete</button>
         `;
         todoListDiv.appendChild(taskElement);
@@ -137,10 +159,17 @@
     // Function to add a task
     function addTodo() {
       const input = document.getElementById("todo-input");
+      const priority = document.getElementById("priority-select").value;
+      const deadline = document.getElementById("deadline-input").value;
       const newTask = input.value.trim();
 
       if (newTask) {
-        tasks.push(newTask);
+        const task = {
+          text: newTask,
+          priority: priority,
+          deadline: deadline || "No deadline set",  // Default if no date is chosen
+        };
+        tasks.push(task);
         localStorage.setItem("tasks", JSON.stringify(tasks));
         input.value = "";  // Clear the input field
         displayTasks();    // Re-render the task list
