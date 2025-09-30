@@ -120,7 +120,7 @@
 </head>
 <body>
   <h1>Welcome to Daily Dose</h1>
-  <p class="subtitle">Log in to access your tools</p>
+  <p class="subtitle" id="subtitle">Log in to access your tools</p>
 
   <!-- Login Form -->
   <div class="login-container" id="login-container">
@@ -162,7 +162,7 @@
         localStorage.setItem("isLoggedIn", "true");
 
         // Hide login form and show landing page
-        document.getElementById("subtitle").style.display = "none";
+        document.getElementById("subtitle").style.display = "none";  // Hide subtitle
         document.getElementById("login-container").style.display = "none";
         document.getElementById("landing-page").style.display = "block";
       } else {
@@ -178,6 +178,7 @@
       if (isLoggedIn === "true") {
         document.getElementById("login-container").style.display = "none";
         document.getElementById("landing-page").style.display = "block";
+        document.getElementById("subtitle").style.display = "none";  // Hide subtitle
       }
     };
   </script>
