@@ -159,6 +159,7 @@
         localStorage.setItem("isLoggedIn", "true");
 
         // Hide login form and show landing page
+        document.getElementById("subtitle").style.display = "none";
         document.getElementById("login-container").style.display = "none";
         document.getElementById("landing-page").style.display = "block";
       } else {
